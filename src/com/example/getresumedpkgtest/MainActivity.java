@@ -28,7 +28,12 @@ public class MainActivity extends Activity {
         btnQuery.setOnClickListener(v -> queryResumedPackage(Display.DEFAULT_DISPLAY));
         btnQueryAll.setOnClickListener(v -> queryAllDisplays());
 
-        // Auto-query on launch for testing
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // Auto-query when activity is resumed for testing
         queryResumedPackage(Display.DEFAULT_DISPLAY);
     }
 
