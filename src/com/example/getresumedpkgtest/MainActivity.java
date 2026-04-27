@@ -2,6 +2,7 @@ package com.example.getresumedpkgtest;
 
 import android.app.Activity;
 import android.app.ActivityTaskManager;
+import android.hardware.display.DisplayManager;
 import android.os.Bundle;
 import android.os.RemoteException;
 import android.os.ServiceManager;
