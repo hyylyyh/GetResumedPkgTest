@@ -34,7 +34,9 @@ public class MainActivity extends Activity {
     protected void onResume() {
         super.onResume();
         // Auto-query when activity is resumed for testing
-        queryResumedPackage(Display.DEFAULT_DISPLAY);
+        // Delay to avoid race condition during window transition
+        getWindow().getDecorView().postDelayed(
+                () -> queryResumedPackage(Display.DEFAULT_DISPLAY), 1000);
     }
 
     private void queryResumedPackage(int displayId) {
