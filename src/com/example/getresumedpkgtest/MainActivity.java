@@ -1,7 +1,6 @@
 package com.example.getresumedpkgtest;
 
 import android.app.Activity;
-import android.app.ActivityTaskManager;
 import android.hardware.display.DisplayManager;
 import android.os.Bundle;
 import android.os.RemoteException;
@@ -27,16 +26,13 @@ public class MainActivity extends Activity {
 
         btnQuery.setOnClickListener(v -> queryResumedPackage(Display.DEFAULT_DISPLAY));
         btnQueryAll.setOnClickListener(v -> queryAllDisplays());
-
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        // Auto-query when activity is resumed for testing
-        // Delay to avoid race condition during window transition
-        getWindow().getDecorView().postDelayed(
-                () -> queryResumedPackage(Display.DEFAULT_DISPLAY), 1000);
+        // Auto-query all displays when activity is resumed for testing
+        getWindow().getDecorView().postDelayed(this::queryAllDisplays, 1000);
     }
 
     private void queryResumedPackage(int displayId) {
@@ -61,7 +57,7 @@ public class MainActivity extends Activity {
 
     private void queryAllDisplays() {
         StringBuilder sb = new StringBuilder();
-        android.hardware.display.DisplayManager dm = getSystemService(DisplayManager.class);
+        DisplayManager dm = getSystemService(DisplayManager.class);
         for (Display display : dm.getDisplays()) {
             try {
                 android.os.IBinder binder = ServiceManager.getService("activity_task");
@@ -69,13 +65,14 @@ public class MainActivity extends Activity {
                         android.app.IActivityTaskManager.Stub.asInterface(binder);
                 String pkg = atm.getResumedPackageNameOnDisplay(display.getDisplayId());
                 sb.append("Display ").append(display.getDisplayId())
+                  .append(" (").append(display.getName()).append(")")
                   .append(": ").append(pkg != null ? pkg : "null").append("\n");
             } catch (RemoteException e) {
                 sb.append("Display ").append(display.getDisplayId())
                   .append(": ERROR ").append(e.getMessage()).append("\n");
             }
         }
-        Log.d(TAG, sb.toString());
-        mResultText.setText(sb.toString());
+        Log.d(TAG, sb.toString().trim());
+        mResultText.setText(sb.toString().trim());
     }
 }
